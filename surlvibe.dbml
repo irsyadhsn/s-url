@@ -1,0 +1,120 @@
+// ============================================================
+// surlvibe — DBML schema (dbdiagram.io compatible)
+//
+// Source of truth: server/src/db/schema.ts (Drizzle ORM → PostgreSQL)
+// Index / constraint names mirror server/migrations/*.sql exactly.
+//
+// Use: https://dbdiagram.io/d → New diagram → DBML → paste.
+// ============================================================
+
+Project surlvibe {
+  database_type: 'PostgreSQL'
+  Note: '''
+URL shortener with Free / Premium plans.
+
+Free plan: 5 custom aliases held at a time (`urls.is_custom_alias`).
+Premium: unlimited. 30-day period, extended on each successful checkout.
+
+Expiry is evaluated lazily in app code (`effectivePlan`), not by a
+background job — `users.plan` stays 'premium' until the next write,
+while `plan_expires_at` in the past means the user is effectively Free.
+
+Payments are simulated (no gateway); `payments.reference` is the
+receipt number shown to the user.
+'''
+}
+
+// ------------------------------------------------------------
+// Enums
+// ------------------------------------------------------------
+
+enum user_role {
+  user
+  admin
+}
+
+enum user_plan {
+  free
+  premium
+}
+
+enum payment_status {
+  pending
+  succeeded
+  failed
+}
+
+// ------------------------------------------------------------
+// Tables
+// ------------------------------------------------------------
+
+Table users {
+  id uuid [pk, default: `gen_random_uuid()`]
+  email text [not null, note: 'Login identity, unique']
+  password_hash text [not null, note: 'bcrypt hash — never leaves the server']
+  role user_role [not null, default: 'user', note: 'admin bypasses the alias quota and sees the admin console']
+  plan user_plan [not null, default: 'free']
+  plan_expires_at timestamptz [note: 'NULL on Free. Set/extended by a successful checkout; a past value means the user is effectively Free.']
+  created_at timestamptz [not null, default: `now()`]
+
+  indexes {
+    email [unique, name: 'users_email_unique']
+    created_at [name: 'users_created_at_idx']
+  }
+}
+
+Table urls {
+  id uuid [pk, default: `gen_random_uuid()`]
+  short_code text [not null, note: 'Public slug resolved by /{short_code}']
+  original_url text [not null]
+  user_id uuid [not null, note: 'Owner; row is deleted with the user']
+  clicks integer [not null, default: 0, note: 'Denormalized total; click_daily holds the per-day series']
+  is_custom_alias boolean [not null, default: false, note: 'True when the user chose the code — this is what the Free 5-alias quota counts']
+  expires_at timestamptz [note: 'NULL = never expires']
+  created_at timestamptz [not null, default: `now()`]
+  updated_at timestamptz [not null, default: `now()`]
+
+  indexes {
+    short_code [unique, name: 'urls_short_code_unique']
+    user_id [name: 'urls_user_id_idx']
+    expires_at [name: 'urls_expires_at_idx']
+  }
+}
+
+// Per-link clicks per UTC day — powers the dashboard chart.
+Table click_daily {
+  url_id uuid [not null]
+  day date [not null, note: 'UTC calendar day (YYYY-MM-DD)']
+  clicks integer [not null, default: 0]
+
+  indexes {
+    (url_id, day) [pk, name: 'click_daily_url_id_day_pk']
+    day [name: 'click_daily_day_idx']
+  }
+}
+
+// Simulated payment — no gateway involved.
+Table payments {
+  id uuid [pk, default: `gen_random_uuid()`]
+  user_id uuid [not null, note: 'Purchaser; row is deleted with the user']
+  plan user_plan [not null, note: 'Plan purchased by this checkout']
+  amount_cents integer [not null, note: 'Cents — 2900 = $29.00']
+  currency text [not null, default: 'USD']
+  reference text [not null, note: 'Receipt number shown to the user, e.g. SV-XXXXXX']
+  status payment_status [not null, default: 'succeeded']
+  plan_expires_at timestamptz [note: 'End of the period this purchase bought (mirrors users.plan_expires_at)']
+  created_at timestamptz [not null, default: `now()`]
+
+  indexes {
+    reference [unique, name: 'payments_reference_unique']
+    user_id [name: 'payments_user_id_idx']
+  }
+}
+
+// ------------------------------------------------------------
+// Relationships (FK lives on the many side, ON DELETE CASCADE)
+// ------------------------------------------------------------
+
+Ref: users.id < urls.user_id [delete: cascade, update: no action]
+Ref: urls.id < click_daily.url_id [delete: cascade, update: no action]
+Ref: users.id < payments.user_id [delete: cascade, update: no action]

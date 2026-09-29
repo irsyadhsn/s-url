@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2026-09-24T02:20:00.000Z" agent="surlvibe-erd" version="24.7.7" type="device">
+  <diagram id="surlvibe-erd" name="surlvibe ERD">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- ===================== TITLE ===================== -->
+        <mxCell id="title" value="surlvibe — PostgreSQL ERD&#10;Drizzle ORM schema · 3 entities · 2 FK relationships (both ON DELETE CASCADE)" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=16;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="360" y="30" width="520" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- ===================== users ===================== -->
+        <mxCell id="users" value="users" style="swimlane;html=1;childLayout=stackLayout;horizontal=1;startSize=32;horizontalStack=0;verticalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;swimlaneFillColor=#dae8fc;swimlaneLineColor=#6c8ebf;strokeColor=#6c8ebf;fillColor=#dae8fc;fontSize=14;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="80" y="140" width="300" height="172" as="geometry" />
+        </mxCell>
+        <mxCell id="users_id" value="&lt;b&gt;id&lt;/b&gt;&amp;nbsp;·&amp;nbsp;uuid&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#6c8ebf&quot;&gt;PK&lt;/font&gt;&amp;nbsp;&amp;nbsp;DEFAULT gen_random_uuid()" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=0;strokeColor=#6c8ebf;fillColor=#ffffff;fontSize=12;spacingLeft=8;" vertex="1" parent="users">
+          <mxGeometry y="32" width="300" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="users_email" value="&lt;b&gt;email&lt;/b&gt;&amp;nbsp;·&amp;nbsp;text&amp;nbsp;&amp;nbsp;NOT NULL&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#b46504&quot;&gt;UNIQUE&lt;/font&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=0;strokeColor=#6c8ebf;fillColor=#ffffff;fontSize=12;spacingLeft=8;" vertex="1" parent="users">
+          <mxGeometry y="60" width="300" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="users_password_hash" value="&lt;b&gt;password_hash&lt;/b&gt;&amp;nbsp;·&amp;nbsp;text&amp;nbsp;&amp;nbsp;NOT NULL" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=0;strokeColor=#6c8ebf;fillColor=#ffffff;fontSize=12;spacingLeft=8;" vertex="1" parent="users">
+          <mxGeometry y="88" width="300" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="users_role" value="&lt;b&gt;role&lt;/b&gt;&amp;nbsp;·&amp;nbsp;user_role ENUM&amp;nbsp;&amp;nbsp;NOT NULL&amp;nbsp;&amp;nbsp;DEFAULT &amp;apos;user&amp;apos;&amp;nbsp;&amp;nbsp;{user, admin}" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=0;strokeColor=#6c8ebf;fillColor=#ffffff;fontSize=12;spacingLeft=8;" vertex="1" parent="users">
+          <mxGeometry y="116" width="300" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="users_created_at" value="&lt;b&gt;created_at&lt;/b&gt;&amp;nbsp;·&amp;nbsp;timestamptz&amp;nbsp;&amp;nbsp;NOT NULL&amp;nbsp;&amp;nbsp;DEFAULT now()&amp;nbsp;&amp;nbsp;IDX" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=0;strokeColor=#6c8ebf;fillColor=#ffffff;fontSize=12;spacingLeft=8;" vertex="1" parent="users">
+          <mxGeometry y="144" width="300" height="28" as="geometry" />
+        </mxCell>
+
+        <!-- ===================== urls ===================== -->
+        <mxCell id="urls" value="urls" style="swimlane;html=1;childLayout=stackLayout;horizontal=1;startSize=32;horizontalStack=0;verticalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;swimlaneFillColor=#d5e8d4;swimlaneLineColor=#82b366;strokeColor=#82b366;fillColor=#d5e8d4;fontSize=14;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="520" y="120" width="340" height="256" as="geometry" />
+        </mxCell>
+        <mxCell id="urls_id" value="&lt;b&gt;id&lt;/b&gt;&amp;nbsp;·&amp;nbsp;uuid&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#82b366&quot;&gt;PK&lt;/font&gt;&amp;nbsp;&amp;nbsp;DEFAULT gen_random_uuid()" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=0;strokeColor=#82b366;fillColor=#ffffff;fontSize=12;spacingLeft=8;" vertex="1" parent="urls">
+          <mxGeometry y="32" width="340" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="urls_short_code" value="&lt;b&gt;short_code&lt;/b&gt;&amp;nbsp;·&amp;nbsp;text&amp;nbsp;&amp;nbsp;NOT NULL&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#b46504&quot;&gt;UNIQUE&lt;/font&gt;&amp;nbsp;&amp;nbsp;IDX" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=0;strokeColor=#82b366;fillColor=#ffffff;fontSize=12;spacingLeft=8;" vertex="1" parent="urls">
+          <mxGeometry y="60" width="340" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="urls_original_url" value="&lt;b&gt;original_url&lt;/b&gt;&amp;nbsp;·&amp;nbsp;text&amp;nbsp;&amp;nbsp;NOT NULL" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=0;strokeColor=#82b366;fillColor=#ffffff;fontSize=12;spacingLeft=8;" vertex="1" parent="urls">
+          <mxGeometry y="88" width="340" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="urls_user_id" value="&lt;b&gt;user_id&lt;/b&gt;&amp;nbsp;·&amp;nbsp;uuid&amp;nbsp;&amp;nbsp;NOT NULL&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#b46504&quot;&gt;FK → users.id&lt;/font&gt;&amp;nbsp;&amp;nbsp;IDX" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=0;strokeColor=#d79b00;fillColor=#ffe6cc;fontSize=12;spacingLeft=8;" vertex="1" parent="urls">
+          <mxGeometry y="116" width="340" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="urls_clicks" value="&lt;b&gt;clicks&lt;/b&gt;&amp;nbsp;·&amp;nbsp;integer&amp;nbsp;&amp;nbsp;NOT NULL&amp;nbsp;&amp;nbsp;DEFAULT 0&amp;nbsp;&amp;nbsp;(denormalized total)" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=0;strokeColor=#82b366;fillColor=#ffffff;fontSize=12;spacingLeft=8;" vertex="1" parent="urls">
+          <mxGeometry y="144" width="340" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="urls_expires_at" value="&lt;b&gt;expires_at&lt;/b&gt;&amp;nbsp;·&amp;nbsp;timestamptz&amp;nbsp;&amp;nbsp;NULL&amp;nbsp;&amp;nbsp;IDX" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=0;strokeColor=#82b366;fillColor=#ffffff;fontSize=12;spacingLeft=8;" vertex="1" parent="urls">
+          <mxGeometry y="172" width="340" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="urls_created_at" value="&lt;b&gt;created_at&lt;/b&gt;&amp;nbsp;·&amp;nbsp;timestamptz&amp;nbsp;&amp;nbsp;NOT NULL&amp;nbsp;&amp;nbsp;DEFAULT now()" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=0;strokeColor=#82b366;fillColor=#ffffff;fontSize=12;spacingLeft=8;" vertex="1" parent="urls">
+          <mxGeometry y="200" width="340" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="urls_updated_at" value="&lt;b&gt;updated_at&lt;/b&gt;&amp;nbsp;·&amp;nbsp;timestamptz&amp;nbsp;&amp;nbsp;NOT NULL&amp;nbsp;&amp;nbsp;DEFAULT now()" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=0;strokeColor=#82b366;fillColor=#ffffff;fontSize=12;spacingLeft=8;" vertex="1" parent="urls">
+          <mxGeometry y="228" width="340" height="28" as="geometry" />
+        </mxCell>
+
+        <!-- ===================== click_daily ===================== -->
+        <mxCell id="click_daily" value="click_daily" style="swimlane;html=1;childLayout=stackLayout;horizontal=1;startSize=32;horizontalStack=0;verticalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;swimlaneFillColor=#ffe6cc;swimlaneLineColor=#d79b00;strokeColor=#d79b00;fillColor=#ffe6cc;fontSize=14;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="1000" y="160" width="320" height="116" as="geometry" />
+        </mxCell>
+        <mxCell id="cd_url_id" value="&lt;b&gt;url_id&lt;/b&gt;&amp;nbsp;·&amp;nbsp;uuid&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#b46504&quot;&gt;PK (1/2)&amp;nbsp;·&amp;nbsp;FK → urls.id&lt;/font&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=0;strokeColor=#d79b00;fillColor=#ffe6cc;fontSize=12;spacingLeft=8;" vertex="1" parent="click_daily">
+          <mxGeometry y="32" width="320" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="cd_day" value="&lt;b&gt;day&lt;/b&gt;&amp;nbsp;·&amp;nbsp;date&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#b46504&quot;&gt;PK (2/2)&lt;/font&gt;&amp;nbsp;&amp;nbsp;(UTC day)&amp;nbsp;&amp;nbsp;IDX" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=0;strokeColor=#d79b00;fillColor=#ffe6cc;fontSize=12;spacingLeft=8;" vertex="1" parent="click_daily">
+          <mxGeometry y="60" width="320" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="cd_clicks" value="&lt;b&gt;clicks&lt;/b&gt;&amp;nbsp;·&amp;nbsp;integer&amp;nbsp;&amp;nbsp;NOT NULL&amp;nbsp;&amp;nbsp;DEFAULT 0" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=0;strokeColor=#d79b00;fillColor=#ffe6cc;fontSize=12;spacingLeft=8;" vertex="1" parent="click_daily">
+          <mxGeometry y="88" width="320" height="28" as="geometry" />
+        </mxCell>
+
+        <!-- ============ RELATIONSHIP: users 1 ──&lt; urls ============ -->
+        <mxCell id="rel_users_urls" value="ON DELETE CASCADE" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=ERone;startFill=0;endArrow=ERmany;endFill=0;strokeColor=#6c8ebf;strokeWidth=2;fontColor=#6c8ebf;fontSize=11;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.35;entryDx=0;entryDy=0;" edge="1" parent="1" source="users" target="urls">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel_users_urls_card1" value="1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=13;fontStyle=1;fontColor=#6c8ebf;" vertex="1" connectable="0" parent="rel_users_urls">
+          <mxGeometry x="-0.7" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel_users_urls_cardN" value="N" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=13;fontStyle=1;fontColor=#6c8ebf;" vertex="1" connectable="0" parent="rel_users_urls">
+          <mxGeometry x="0.7" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ============ RELATIONSHIP: urls 1 ──&lt; click_daily ============ -->
+        <mxCell id="rel_urls_cd" value="ON DELETE CASCADE" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=ERone;startFill=0;endArrow=ERmany;endFill=0;strokeColor=#82b366;strokeWidth=2;fontColor=#82b366;fontSize=11;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="urls" target="click_daily">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel_urls_cd_card1" value="1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=13;fontStyle=1;fontColor=#82b366;" vertex="1" connectable="0" parent="rel_urls_cd">
+          <mxGeometry x="-0.7" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel_urls_cd_cardN" value="N" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=13;fontStyle=1;fontColor=#82b366;" vertex="1" connectable="0" parent="rel_urls_cd">
+          <mxGeometry x="0.7" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ===================== RELATIONSHIP NOTES ===================== -->
+        <mxCell id="note_rel1" value="users.user_id → urls: one user creates many links (mandatory: NOT NULL).&lt;br&gt;Deleting a user cascades: all their urls (and further click_daily rows) are deleted." style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;size=14;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;align=left;spacing=8;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="300" y="380" width="340" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="note_rel2" value="urls.id → click_daily.url_id: one link has one row per UTC day.&lt;br&gt;Composite PK (url_id, day). Cascade delete removes a link’s daily history.&lt;br&gt;urls.clicks is the denormalized total kept in sync by the Redis → PG job." style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;size=14;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;align=left;spacing=8;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="700" y="420" width="380" height="84" as="geometry" />
+        </mxCell>
+
+        <!-- ===================== LEGEND ===================== -->
+        <mxCell id="legend" value="LEGEND" style="swimlane;html=1;childLayout=stackLayout;horizontal=1;startSize=28;horizontalStack=0;verticalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;swimlaneFillColor=#f5f5f5;swimlaneLineColor=#666666;strokeColor=#666666;fillColor=#f5f5f5;fontSize=12;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="80" y="560" width="380" height="196" as="geometry" />
+        </mxCell>
+        <mxCell id="lg_pk" value="&lt;b&gt;PK&lt;/font&gt;&lt;/b&gt;&amp;nbsp;— primary key&amp;nbsp;&amp;nbsp;·&amp;nbsp;blue/green/orange header rows" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=0;strokeColor=#666666;fillColor=#ffffff;fontSize=12;spacingLeft=8;" vertex="1" parent="legend">
+          <mxGeometry y="28" width="380" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="lg_fk" value="&lt;b&gt;FK&lt;/b&gt;&amp;nbsp;— foreign key (orange row)· references parent PK" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=0;strokeColor=#d79b00;fillColor=#ffe6cc;fontSize=12;spacingLeft=8;" vertex="1" parent="legend">
+          <mxGeometry y="54" width="380" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="lg_uq" value="&lt;b&gt;UNIQUE&lt;/b&gt;&amp;nbsp;— unique index (email, short_code)" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=0;strokeColor=#666666;fillColor=#ffffff;fontSize=12;spacingLeft=8;" vertex="1" parent="legend">
+          <mxGeometry y="80" width="380" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="lg_enum" value="&lt;b&gt;user_role ENUM&lt;/b&gt;&amp;nbsp;— PostgreSQL type: 'user' | 'admin'" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=0;strokeColor=#666666;fillColor=#ffffff;fontSize=12;spacingLeft=8;" vertex="1" parent="legend">
+          <mxGeometry y="106" width="380" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="lg_rel" value="&lt;b&gt;1 ──&lt; N&lt;/b&gt;&amp;nbsp;— one-to-many (crow’s foot at N side)" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=0;strokeColor=#666666;fillColor=#ffffff;fontSize=12;spacingLeft=8;" vertex="1" parent="legend">
+          <mxGeometry y="132" width="380" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="lg_cascade" value="&lt;b&gt;CASCADE&lt;/b&gt;&amp;nbsp;— both FKs: ON DELETE CASCADE" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=0;strokeColor=#666666;fillColor=#ffffff;fontSize=12;spacingLeft=8;" vertex="1" parent="legend">
+          <mxGeometry y="158" width="380" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="lg_nonerd" value="Not in relational model: JWT (stateless), Redis (redirect cache + pending clicks)." style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=0;strokeColor=none;fillColor=none;fontSize=11;fontColor=#888888;spacingLeft=8;" vertex="1" parent="legend">
+          <mxGeometry y="184" width="380" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- ===================== INDEXES SUMMARY ===================== -->
+        <mxCell id="indexes" value="INDEXES &amp; CONSTRAINTS" style="swimlane;html=1;childLayout=stackLayout;horizontal=1;startSize=28;horizontalStack=0;verticalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;swimlaneFillColor=#f5f5f5;swimlaneLineColor=#666666;strokeColor=#666666;fillColor=#f5f5f5;fontSize=12;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="520" y="560" width="460" height="222" as="geometry" />
+        </mxCell>
+        <mxCell id="ix1" value="users_email_unique (email)" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=0;strokeColor=#666666;fillColor=#ffffff;fontSize=12;spacingLeft=8;fontFamily=Courier New;" vertex="1" parent="indexes">
+          <mxGeometry y="28" width="460" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="ix2" value="users_created_at_idx (created_at)" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=0;strokeColor=#666666;fillColor=#ffffff;fontSize=12;spacingLeft=8;fontFamily=Courier New;" vertex="1" parent="indexes">
+          <mxGeometry y="52" width="460" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="ix3" value="urls_short_code_unique (short_code) — collision guard" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=0;strokeColor=#666666;fillColor=#ffffff;fontSize=12;spacingLeft=8;fontFamily=Courier New;" vertex="1" parent="indexes">
+          <mxGeometry y="76" width="460" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="ix4" value="urls_user_id_idx (user_id)" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=0;strokeColor=#666666;fillColor=#ffffff;fontSize=12;spacingLeft=8;fontFamily=Courier New;" vertex="1" parent="indexes">
+          <mxGeometry y="100" width="460" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="ix5" value="urls_expires_at_idx (expires_at)" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=0;strokeColor=#666666;fillColor=#ffffff;fontSize=12;spacingLeft=8;fontFamily=Courier New;" vertex="1" parent="indexes">
+          <mxGeometry y="124" width="460" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="ix6" value="click_daily_url_id_day_pk (url_id, day) — composite PK" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=0;strokeColor=#666666;fillColor=#ffffff;fontSize=12;spacingLeft=8;fontFamily=Courier New;" vertex="1" parent="indexes">
+          <mxGeometry y="148" width="460" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="ix7" value="click_daily_day_idx (day)" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=0;strokeColor=#666666;fillColor=#ffffff;fontSize=12;spacingLeft=8;fontFamily=Courier New;" vertex="1" parent="indexes">
+          <mxGeometry y="172" width="460" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="ix8" value="FKs: urls_user_id_users_id_fk · click_daily_url_id_urls_id_fk" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=0;strokeColor=none;fillColor=none;fontSize=11;fontColor=#888888;spacingLeft=8;fontFamily=Courier New;" vertex="1" parent="indexes">
+          <mxGeometry y="196" width="460" height="22" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

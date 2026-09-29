@@ -1,0 +1,34 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1790134521647,
+      "tag": "0000_unique_skin",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1790151276089,
+      "tag": "0001_careful_elektra",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1790215427190,
+      "tag": "0002_add_user_role",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1790568633324,
+      "tag": "0003_subscription_plans",
+      "breakpoints": true
+    }
+  ]
+}
