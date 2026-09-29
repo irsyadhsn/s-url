@@ -31,8 +31,12 @@ export class ApiError extends Error {
     return new ApiError(404, "NOT_FOUND", message);
   }
 
-  static conflict(message = "Conflict", code = "CONFLICT"): ApiError {
-    return new ApiError(409, code, message);
+  static conflict(
+    message = "Conflict",
+    code = "CONFLICT",
+    details?: unknown,
+  ): ApiError {
+    return new ApiError(409, code, message, details);
   }
 
   /** 402 — a feature gate tied to the subscription plan (not a real charge). */

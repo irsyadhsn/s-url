@@ -9,11 +9,9 @@ import {
   effectivePlan,
 } from "../billing/plan.js";
 import * as userRepo from "../auth/auth.repository.js";
-import type {
-  CreateLinkBody,
-  UpdateLinkBody,
-} from "./links.schemas.js";
+import type { CreateLinkBody, UpdateLinkBody } from "./links.schemas.js";
 import * as linkRepo from "./links.repository.js";
+import type { Url } from "../../db/schema.js";
 
 const PG_UNIQUE_VIOLATION = "23505";
 const MAX_GENERATED_CODE_ATTEMPTS = 3;
@@ -46,6 +44,24 @@ function withShortUrl<T extends { shortCode: string }>(link: T) {
   return { ...link, shortUrl: `${env.SHORT_URL_BASE}/${link.shortCode}` };
 }
 
+/**
+ * 409 for a taken alias, enriched with who holds it and whether it has
+ * lapsed — the client turns this into "edit your link instead" vs
+ * "reserved by an expired link, pick another".
+ */
+function aliasConflict(expired: boolean, ownedByYou: boolean): ApiError {
+  const message = ownedByYou
+    ? "You already use this alias on one of your links — edit or delete that link first."
+    : expired
+      ? "This alias is reserved by an expired link; only its owner can reuse it. Choose another."
+      : "Alias already in use";
+  return ApiError.conflict(message, "ALIAS_TAKEN", { expired, ownedByYou });
+}
+
+function isExpiredRow(row: Url): boolean {
+  return row.expiresAt !== null && row.expiresAt.getTime() <= Date.now();
+}
+
 export async function createLink(userId: string, input: CreateLinkBody) {
   const payload = {
     originalUrl: input.originalUrl,
@@ -54,20 +70,56 @@ export async function createLink(userId: string, input: CreateLinkBody) {
   };
 
   if (input.customAlias) {
-    await assertAliasQuota(userId);
-    try {
-      const link = await linkRepo.create({
-        ...payload,
-        shortCode: input.customAlias,
+    // Max 2 passes: a 23505 on insert means a winner row appeared between
+    // our find and the insert — the second pass classifies it instead of
+    // blindly conflicting. Same for a revive whose row vanished mid-race.
+    for (let attempt = 0; attempt < 2; attempt++) {
+      const existing = await linkRepo.findByShortCode(input.customAlias);
+
+      if (!existing) {
+        await assertAliasQuota(userId);
+        try {
+          const link = await linkRepo.create({
+            ...payload,
+            shortCode: input.customAlias,
+            isCustomAlias: true,
+          });
+          return withShortUrl(link);
+        } catch (err) {
+          if (hasPgErrorCode(err, PG_UNIQUE_VIOLATION)) {
+            continue;
+          }
+          throw err;
+        }
+      }
+
+      const expired = isExpiredRow(existing);
+      const ownedByYou = existing.userId === userId;
+
+      if (!expired || !ownedByYou) {
+        throw aliasConflict(expired, ownedByYou);
+      }
+
+      // Revive: same row (id, clicks, click_daily history preserved), new
+      // target/expiry. Counting is unchanged when it was already a custom
+      // alias; flipping a *generated* code to custom adds to the quota.
+      if (!existing.isCustomAlias) {
+        await assertAliasQuota(userId);
+      }
+      const revived = await linkRepo.update(existing.id, userId, {
+        originalUrl: input.originalUrl,
+        expiresAt: input.expiresAt ?? null,
         isCustomAlias: true,
       });
-      return withShortUrl(link);
-    } catch (err) {
-      if (hasPgErrorCode(err, PG_UNIQUE_VIOLATION)) {
-        throw ApiError.conflict("Alias already in use", "ALIAS_TAKEN");
+      if (revived) {
+        // Stale cache would keep serving the old target (or a lapsed
+        // expiry) for up to 24h — drop it so the next resolve reads PG.
+        await redirectCache.del(revived.shortCode);
+        return withShortUrl(revived);
       }
-      throw err;
+      // Row deleted between find and update — loop to re-classify.
     }
+    throw aliasConflict(false, false);
   }
 
   for (let attempt = 0; attempt < MAX_GENERATED_CODE_ATTEMPTS; attempt++) {

@@ -63,6 +63,18 @@ export async function remove(id: string, userId: string): Promise<boolean> {
   return rows.length > 0;
 }
 
+/** Any row holding this short code — used to detect alias reuse attempts. */
+export async function findByShortCode(
+  shortCode: string,
+): Promise<typeof urls.$inferSelect | null> {
+  const rows = await db
+    .select()
+    .from(urls)
+    .where(eq(urls.shortCode, shortCode))
+    .limit(1);
+  return rows[0] ?? null;
+}
+
 /** How many of the user's links currently use a chosen (custom) alias. */
 export async function countCustomAliases(userId: string): Promise<number> {
   const [row] = await db
