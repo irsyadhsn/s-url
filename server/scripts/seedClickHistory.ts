@@ -1,11 +1,4 @@
 /**
- * Backfill click_daily with plausible history for the last 13 full UTC days
- * so the dashboard chart has data on a fresh dev database.
- *
- * Idempotent: wipes past-day rows, reseeds, and adjusts urls.clicks so
- * total clicks stay consistent with sum(daily). Today's rows are untouched
- * (they come from the live Redis flush).
- *
  * Usage: npm run db:seed:clicks
  */
 import { sql } from "drizzle-orm";

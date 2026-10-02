@@ -6,7 +6,6 @@ import { checkoutSchema } from "./billing.schemas.js";
 
 const router = Router();
 
-// Public: the pricing page renders for logged-out visitors too.
 router.get("/plans", billingController.plans);
 
 router.use(authenticate);

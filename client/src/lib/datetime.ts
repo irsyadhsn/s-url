@@ -1,4 +1,3 @@
-/** ISO string (or null) → value for <input type="datetime-local"> in local time. */
 export function toDatetimeLocal(iso: string | null | undefined): string {
   if (!iso) return "";
   const date = new Date(iso);
@@ -10,7 +9,6 @@ export function toDatetimeLocal(iso: string | null | undefined): string {
   );
 }
 
-/** Display helper: ISO → "Sep 23, 2026, 14:05" (local). */
 export function formatDateTime(iso: string | null | undefined): string {
   if (!iso) return "—";
   const date = new Date(iso);
@@ -27,7 +25,6 @@ export function isExpired(iso: string | null | undefined): boolean {
   return !Number.isNaN(date.getTime()) && date.getTime() < Date.now();
 }
 
-/** "YYYY-MM-DD" (UTC day key) → "Sep 23" label (UTC, no TZ shift). */
 export function formatDayLabel(day: string): string {
   const date = new Date(`${day}T00:00:00Z`);
   if (Number.isNaN(date.getTime())) return day;

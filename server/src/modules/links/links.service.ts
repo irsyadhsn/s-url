@@ -4,10 +4,7 @@ import * as redirectCache from "../redirect/redirect.cache.js";
 import { flushForRead } from "../redirect/redirect.service.js";
 import { ApiError } from "../../utils/errors.js";
 import { generateShortCode } from "../../utils/shortCode.js";
-import {
-  FREE_CUSTOM_ALIAS_LIMIT,
-  effectivePlan,
-} from "../billing/plan.js";
+import { FREE_CUSTOM_ALIAS_LIMIT, effectivePlan } from "../billing/plan.js";
 import * as userRepo from "../auth/auth.repository.js";
 import type { CreateLinkBody, UpdateLinkBody } from "./links.schemas.js";
 import * as linkRepo from "./links.repository.js";
@@ -16,13 +13,6 @@ import type { Url } from "../../db/schema.js";
 const PG_UNIQUE_VIOLATION = "23505";
 const MAX_GENERATED_CODE_ATTEMPTS = 3;
 
-/**
- * Free accounts may hold FREE_CUSTOM_ALIAS_LIMIT links with a chosen
- * alias at once; Premium is unlimited. Checked on create only — aliases
- * already in use keep working if a plan later lapses. Reads the plan from
- * the DB so an expired premium row (effectivePlan) is gated immediately.
- * Admins are exempt: they never see an upgrade wall.
- */
 async function assertAliasQuota(userId: string): Promise<void> {
   const user = await userRepo.findById(userId);
   if (!user) {
@@ -44,11 +34,6 @@ function withShortUrl<T extends { shortCode: string }>(link: T) {
   return { ...link, shortUrl: `${env.SHORT_URL_BASE}/${link.shortCode}` };
 }
 
-/**
- * 409 for a taken alias, enriched with who holds it and whether it has
- * lapsed — the client turns this into "edit your link instead" vs
- * "reserved by an expired link, pick another".
- */
 function aliasConflict(expired: boolean, ownedByYou: boolean): ApiError {
   const message = ownedByYou
     ? "You already use this alias on one of your links — edit or delete that link first."
@@ -70,9 +55,6 @@ export async function createLink(userId: string, input: CreateLinkBody) {
   };
 
   if (input.customAlias) {
-    // Max 2 passes: a 23505 on insert means a winner row appeared between
-    // our find and the insert — the second pass classifies it instead of
-    // blindly conflicting. Same for a revive whose row vanished mid-race.
     for (let attempt = 0; attempt < 2; attempt++) {
       const existing = await linkRepo.findByShortCode(input.customAlias);
 
@@ -112,12 +94,9 @@ export async function createLink(userId: string, input: CreateLinkBody) {
         isCustomAlias: true,
       });
       if (revived) {
-        // Stale cache would keep serving the old target (or a lapsed
-        // expiry) for up to 24h — drop it so the next resolve reads PG.
         await redirectCache.del(revived.shortCode);
         return withShortUrl(revived);
       }
-      // Row deleted between find and update — loop to re-classify.
     }
     throw aliasConflict(false, false);
   }
@@ -144,7 +123,6 @@ export async function listLinks(
   page: number,
   pageSize: number,
 ) {
-  // Pull Redis pending clicks into PG first so the list is near-real-time.
   await flushForRead();
 
   const { items, total } = await linkRepo.listByUserId(
@@ -187,7 +165,10 @@ export async function updateLink(
   return withShortUrl(updated!);
 }
 
-export async function deleteLink(userId: string, linkId: string): Promise<void> {
+export async function deleteLink(
+  userId: string,
+  linkId: string,
+): Promise<void> {
   const existing = await linkRepo.findOwnedById(linkId, userId);
   if (!existing) {
     throw ApiError.notFound("Link not found");

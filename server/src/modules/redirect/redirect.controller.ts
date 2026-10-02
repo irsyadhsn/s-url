@@ -15,8 +15,6 @@ export const redirect: RequestHandler = async (req, res) => {
       return;
     }
     case "expired": {
-      // Send visitors to the frontend's friendly expiry page when configured;
-      // otherwise keep the 410 JSON for API-only deployments.
       if (env.FRONTEND_URL) {
         res.redirect(
           302,

@@ -1,6 +1,4 @@
 /**
- * Seeds an admin user (creates it, or promotes it if the email exists).
- *
  * Usage: npm run db:seed:admin -- [email] [password]
  * Defaults (dev only): admin@surlvibe.local / Admin123!
  */

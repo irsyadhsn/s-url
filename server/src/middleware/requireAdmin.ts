@@ -2,11 +2,6 @@ import type { NextFunction, Request, Response } from "express";
 import * as userRepo from "../modules/auth/auth.repository.js";
 import { ApiError } from "../utils/errors.js";
 
-/**
- * Requires an authenticated request (run `authenticate` first) whose user
- * currently has the admin role. The check hits the database on every request
- * so role changes take effect immediately, without waiting for token expiry.
- */
 export async function requireAdmin(
   req: Request,
   _res: Response,

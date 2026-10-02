@@ -16,7 +16,6 @@ function dayOffset(daysAgo: number): string {
   return d.toISOString().slice(0, 10);
 }
 
-/** Dense zero-filled series so the graph always has every bucket. */
 function zeroFill(
   fromDay: string,
   rows: statsRepo.DayBucket[],
@@ -24,11 +23,7 @@ function zeroFill(
   const map = new Map(rows.map((r) => [r.day, r.clicks]));
   const out: statsRepo.DayBucket[] = [];
   const end = Date.parse(`${utcDay()}T00:00:00Z`);
-  for (
-    let t = Date.parse(`${fromDay}T00:00:00Z`);
-    t <= end;
-    t += 86_400_000
-  ) {
+  for (let t = Date.parse(`${fromDay}T00:00:00Z`); t <= end; t += 86_400_000) {
     const day = new Date(t).toISOString().slice(0, 10);
     out.push({ day, clicks: map.get(day) ?? 0 });
   }
@@ -57,7 +52,11 @@ export async function getOverview(userId: string, days: number) {
   };
 }
 
-export async function getLinkStats(userId: string, linkId: string, days: number) {
+export async function getLinkStats(
+  userId: string,
+  linkId: string,
+  days: number,
+) {
   await flushForRead();
   const link = await linkRepo.findOwnedById(linkId, userId);
   if (!link) {

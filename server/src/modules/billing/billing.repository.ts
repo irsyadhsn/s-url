@@ -9,7 +9,6 @@ import {
   users,
 } from "../../db/schema.js";
 
-/** Links the user chose the short code for (what the free quota counts). */
 export async function countCustomAliases(userId: string): Promise<number> {
   const [row] = await db
     .select({ total: count() })
@@ -35,11 +34,6 @@ export async function listPayments(
     .limit(limit);
 }
 
-/**
- * Writes the receipt and the user's new plan in one transaction so a
- * success response can never show a receipt for an upgrade that didn't
- * land (or vice versa).
- */
 export async function purchasePremium(
   userId: string,
   params: {
@@ -69,7 +63,10 @@ export async function purchasePremium(
       status: "succeeded",
       planExpiresAt: params.planExpiresAt,
     };
-    const [payment] = await tx.insert(payments).values(paymentPayload).returning();
+    const [payment] = await tx
+      .insert(payments)
+      .values(paymentPayload)
+      .returning();
 
     return { user: updated, payment: payment! };
   });

@@ -3,7 +3,12 @@ export class ApiError extends Error {
   public readonly code: string;
   public readonly details?: unknown;
 
-  constructor(status: number, code: string, message: string, details?: unknown) {
+  constructor(
+    status: number,
+    code: string,
+    message: string,
+    details?: unknown,
+  ) {
     super(message);
     this.name = "ApiError";
     this.status = status;
@@ -39,7 +44,6 @@ export class ApiError extends Error {
     return new ApiError(409, code, message, details);
   }
 
-  /** 402 — a feature gate tied to the subscription plan (not a real charge). */
   static paymentRequired(
     message = "Upgrade required",
     code = "PAYMENT_REQUIRED",

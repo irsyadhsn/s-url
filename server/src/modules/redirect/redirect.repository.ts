@@ -13,11 +13,6 @@ export async function findByShortCode(
   return rows[0] ?? null;
 }
 
-/**
- * Atomically bump urls.clicks and upsert click_daily in ONE statement
- * (implicit transaction) so totals and the chart can never diverge.
- * No-op if the short code no longer exists (link deleted mid-flight).
- */
 export async function applyClicks(
   code: string,
   day: string,
@@ -36,7 +31,6 @@ export async function applyClicks(
   `);
 }
 
-/** Apply many claims in a single DB transaction (all-or-nothing). */
 export async function applyClicksBatch(
   claims: { code: string; day: string; count: number }[],
 ): Promise<void> {

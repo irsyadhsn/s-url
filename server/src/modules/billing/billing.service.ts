@@ -50,7 +50,6 @@ function toPaymentView(payment: Payment): PaymentView {
 export interface SubscriptionView {
   plan: "free" | "premium";
   planExpiresAt: string | null;
-  /** Whole days left on a premium period; null on free. */
   daysRemaining: number | null;
   customAliasUsed: number;
   customAliasLimit: number | null;
@@ -63,9 +62,7 @@ function daysLeft(expiresAt: Date | null): number | null {
   return Math.ceil(ms / (24 * 60 * 60 * 1000));
 }
 
-export async function getSubscription(
-  user: User,
-): Promise<SubscriptionView> {
+export async function getSubscription(user: User): Promise<SubscriptionView> {
   const plan = effectivePlan(user);
   const info = PLAN_CATALOG.find((p) => p.id === plan)!;
   const customAliasUsed = await billingRepo.countCustomAliases(user.id);
@@ -73,11 +70,8 @@ export async function getSubscription(
   return {
     plan,
     planExpiresAt: planExpiryOrNull(user),
-    daysRemaining:
-      plan === "premium" ? daysLeft(user.planExpiresAt) : null,
+    daysRemaining: plan === "premium" ? daysLeft(user.planExpiresAt) : null,
     customAliasUsed,
-    // Admins bypass the free-tier quota entirely (see assertAliasQuota),
-    // so the UI must report unlimited rather than a limit it won't enforce.
     customAliasLimit: user.role === "admin" ? null : info.customAliasLimit,
   };
 }
@@ -86,12 +80,6 @@ export function listPlans() {
   return PLAN_CATALOG;
 }
 
-/**
- * Simulated checkout — no gateway, no card data, no network call to a
- * payment provider. The receipt row and the plan upgrade are written in
- * one transaction; renewing while already premium extends from whichever
- * date is later (never shortens what the user already paid for).
- */
 export async function checkout(user: User, input: CheckoutBody) {
   if (input.plan !== "premium") {
     throw ApiError.badRequest("Unsupported plan", "UNSUPPORTED_PLAN");

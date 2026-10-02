@@ -164,15 +164,10 @@ export async function listLinks(
 export async function findLinkById(
   id: string,
 ): Promise<typeof urls.$inferSelect | null> {
-  const rows = await db
-    .select()
-    .from(urls)
-    .where(eq(urls.id, id))
-    .limit(1);
+  const rows = await db.select().from(urls).where(eq(urls.id, id)).limit(1);
   return rows[0] ?? null;
 }
 
-/** Ownership-free delete — admin removal of inappropriate links. */
 export async function removeLink(id: string): Promise<boolean> {
   const rows = await db
     .delete(urls)
@@ -234,9 +229,9 @@ export async function getSystemSeries(fromDay: string): Promise<DayBucket[]> {
     .orderBy(asc(clickDaily.day));
 }
 
-export async function getTopLinks(limit: number): Promise<
-  (typeof urls.$inferSelect)[]
-> {
+export async function getTopLinks(
+  limit: number,
+): Promise<(typeof urls.$inferSelect)[]> {
   return db
     .select()
     .from(urls)

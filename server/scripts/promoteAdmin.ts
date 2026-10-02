@@ -1,7 +1,4 @@
 /**
- * Promotes (or demotes) a user's role from the command line — the only way
- * to create the very first admin, since registration always yields "user".
- *
  * Usage: npm run admin:promote -- user@example.com [admin|user]
  */
 import { eq } from "drizzle-orm";

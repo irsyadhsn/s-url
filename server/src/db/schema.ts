@@ -36,7 +36,7 @@ export const users = pgTable(
     passwordHash: text("password_hash").notNull(),
     role: userRoleEnum("role").notNull().default("user"),
     plan: userPlanEnum("plan").notNull().default("free"),
-    /** Null on the free plan; set (and extended) by successful checkouts. */
+    // Null on the free plan; set (and extended) by successful checkouts.
     planExpiresAt: timestamp("plan_expires_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true })
       .defaultNow()

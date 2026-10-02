@@ -26,16 +26,11 @@ function withShortUrl<T extends { shortCode: string }>(link: T) {
   return { ...link, shortUrl: `${env.SHORT_URL_BASE}/${link.shortCode}` };
 }
 
-/** Dense zero-filled series so the chart always has every bucket. */
 function zeroFill(fromDay: string, rows: adminRepo.DayBucket[]) {
   const map = new Map(rows.map((r) => [r.day, r.clicks]));
   const out: adminRepo.DayBucket[] = [];
   const end = Date.parse(`${utcDay()}T00:00:00Z`);
-  for (
-    let t = Date.parse(`${fromDay}T00:00:00Z`);
-    t <= end;
-    t += 86_400_000
-  ) {
+  for (let t = Date.parse(`${fromDay}T00:00:00Z`); t <= end; t += 86_400_000) {
     const day = new Date(t).toISOString().slice(0, 10);
     out.push({ day, clicks: map.get(day) ?? 0 });
   }
@@ -89,10 +84,7 @@ export async function updateUserRole(
   if (existing.role === "admin" && role === "user") {
     const adminCount = await adminRepo.countAdmins();
     if (adminCount <= 1) {
-      throw ApiError.badRequest(
-        "Cannot demote the last admin",
-        "LAST_ADMIN",
-      );
+      throw ApiError.badRequest("Cannot demote the last admin", "LAST_ADMIN");
     }
   }
 

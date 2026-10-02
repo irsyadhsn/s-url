@@ -14,7 +14,6 @@ export interface PublicUser {
   id: string;
   email: string;
   role: "user" | "admin";
-  /** Effective plan — a lapsed premium period reports as free. */
   plan: "free" | "premium";
   planExpiresAt: string | null;
   createdAt: Date;
@@ -75,13 +74,12 @@ export async function login(input: LoginBody): Promise<{
     throw new ApiError(401, "INVALID_CREDENTIALS", "Invalid email or password");
   }
 
-  const passwordMatches = await bcrypt.compare(input.password, user.passwordHash);
+  const passwordMatches = await bcrypt.compare(
+    input.password,
+    user.passwordHash,
+  );
   if (!passwordMatches) {
-    throw new ApiError(
-      401,
-      "INVALID_CREDENTIALS",
-      "Invalid email or password",
-    );
+    throw new ApiError(401, "INVALID_CREDENTIALS", "Invalid email or password");
   }
 
   return { token: signAccessToken(user.id), user: toPublicUser(user) };

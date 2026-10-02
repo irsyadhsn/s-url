@@ -4,7 +4,6 @@ import type { CheckoutBody } from "./billing.schemas.js";
 import * as billingService from "./billing.service.js";
 import * as billingRepo from "./billing.repository.js";
 
-/** Plans are static — safe to serve anonymously on the pricing page. */
 export const plans: RequestHandler = (_req, res) => {
   res.json({ plans: billingService.listPlans() });
 };

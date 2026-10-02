@@ -10,16 +10,10 @@ export type ResolveOutcome =
 const CLICKS_PREFIX = "clicks:";
 const CLICKS_PENDING = "clicks:pending";
 
-/** UTC day (YYYY-MM-DD) used to bucket clicks for the dashboard graph. */
 function utcDay(): string {
   return new Date().toISOString().slice(0, 10);
 }
 
-/**
- * Atomically claim counts: GET → DEL → SREM per key.
- * Data is only destroyed here AFTER we've captured it into `counts`;
- * if the subsequent DB transaction fails we INCRBY/SREM back (see doFlush).
- */
 const POP_SCRIPT = `
 local res = {}
 for i, key in ipairs(KEYS) do
@@ -61,14 +55,12 @@ export async function resolve(code: string): Promise<ResolveOutcome> {
 
 export async function recordClick(code: string): Promise<void> {
   try {
-    // Bucket by UTC day so flush can attribute counts to click_daily rows.
     await redis
       .pipeline()
       .incr(`${CLICKS_PREFIX}${code}:${utcDay()}`)
       .sadd(CLICKS_PENDING, `${code}:${utcDay()}`)
       .exec();
   } catch (err) {
-    // Never fail the redirect, but make Redis outages visible in logs.
     console.error(
       "[record-click] redis write failed",
       code,
@@ -85,14 +77,8 @@ interface Claim {
   count: number;
 }
 
-// Single in-flight flush — concurrent calls join the same promise (no pile-up).
 let flushInFlight: Promise<number> | null = null;
 
-/**
- * Flush Redis click counters → Postgres.
- * Crash-safe: claim counts atomically, write in one transaction,
- * restore to Redis if the DB write fails (no silent loss).
- */
 export function flushPendingClicks(): Promise<number> {
   if (flushInFlight) return flushInFlight;
   flushInFlight = doFlush().finally(() => {
@@ -121,7 +107,6 @@ async function doFlush(): Promise<number> {
     const count = Number(counts[i]);
     if (count <= 0) continue;
 
-    // member is "<shortCode>:<YYYY-MM-DD>" (legacy members may lack ":day").
     const member = pending[i]!;
     const sep = member.lastIndexOf(":");
     const hasDay = sep > 0 && /^\d{4}-\d{2}-\d{2}$/.test(member.slice(sep + 1));
@@ -141,8 +126,6 @@ async function doFlush(): Promise<number> {
   try {
     await redirectRepository.applyClicksBatch(claims);
   } catch (err) {
-    // DB write failed after we already popped Redis — put the counts back
-    // so the next flush retries instead of losing clicks permanently.
     await Promise.all(
       claims.map(async (c) => {
         try {
@@ -152,7 +135,9 @@ async function doFlush(): Promise<number> {
           console.error(
             "[click-sync] failed to restore claim",
             c.member,
-            restoreErr instanceof Error ? restoreErr.message : String(restoreErr),
+            restoreErr instanceof Error
+              ? restoreErr.message
+              : String(restoreErr),
           );
         }
       }),
@@ -163,11 +148,6 @@ async function doFlush(): Promise<number> {
   return claims.reduce((sum, c) => sum + c.count, 0);
 }
 
-/**
- * Best-effort flush for read paths (list/stats) so API responses include
- * the latest Redis counts instead of waiting for the background interval.
- * Errors are logged but never fail the caller's request.
- */
 export async function flushForRead(): Promise<void> {
   try {
     await flushPendingClicks();

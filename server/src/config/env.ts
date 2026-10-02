@@ -16,11 +16,7 @@ const envSchema = z.object({
 
   REDIS_URL: z.string().min(1, "REDIS_URL is required"),
   REDIS_TLS: z.coerce.boolean().default(false),
-  CLICK_SYNC_INTERVAL_MS: z.coerce
-    .number()
-    .int()
-    .min(1_000)
-    .default(1_000),
+  CLICK_SYNC_INTERVAL_MS: z.coerce.number().int().min(1_000).default(1_000),
 
   JWT_SECRET: z.string().min(1, "JWT_SECRET is required"),
   JWT_EXPIRES_IN: z
@@ -34,7 +30,6 @@ const envSchema = z.object({
     .default("https://surl")
     .transform((v) => v.replace(/\/+$/, "")),
 
-  /** Frontend origin — expired short links redirect here (/expired?code=…). */
   FRONTEND_URL: z
     .string()
     .url("FRONTEND_URL must be a valid URL")
