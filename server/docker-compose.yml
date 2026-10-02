@@ -1,9 +1,9 @@
-name: surlvibe
+name: surl
 
 services:
-  surlvibe-postgres:
+  surl-postgres:
     image: postgres:17-alpine
-    container_name: surlvibe-postgres
+    container_name: surl-postgres
     environment:
       POSTGRES_USER: ${POSTGRES_USER:?POSTGRES_USER must be set in .env}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set in .env}
@@ -11,7 +11,7 @@ services:
     ports:
       - "${POSTGRES_PORT:?POSTGRES_PORT must be set in .env}:5432"
     volumes:
-      - surlvibe-postgres-data:/var/lib/postgresql/data
+      - surl-postgres-data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 5s
@@ -20,9 +20,9 @@ services:
       start_period: 10s
     restart: unless-stopped
 
-  surlvibe-redis:
+  surl-redis:
     image: redis:alpine
-    container_name: surlvibe-redis
+    container_name: surl-redis
     command:
       [
         "redis-server",
@@ -34,7 +34,7 @@ services:
     ports:
       - "${REDIS_PORT:-6379}:6379"
     volumes:
-      - surlvibe-redis-data:/data
+      - surl-redis-data:/data
     healthcheck:
       test:
         [
@@ -52,6 +52,5 @@ services:
     restart: unless-stopped
 
 volumes:
-  surlvibe-postgres-data:
-  surlvibe-redis-data:
-
+  surl-postgres-data:
+  surl-redis-data:

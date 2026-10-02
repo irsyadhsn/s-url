@@ -1,4 +1,4 @@
-# surlvibe
+# s-url
 
 A full-stack URL shortener: custom aliases, expiry, Redis-cached redirects, per-day click analytics, free/premium plans, and an admin panel.
 
@@ -22,18 +22,18 @@ A full-stack URL shortener: custom aliases, expiry, Redis-cached redirects, per-
 
 ## Tech Stack
 
-| Layer | Server (`server/`) | Client (`client/`) |
-|---|---|---|
-| Runtime | Node ≥ 20 | Browser |
-| Framework | Express 5 | React 19 + Vite 8 |
-| Language | TypeScript | TypeScript |
-| Data | Drizzle ORM → PostgreSQL 17 | — |
-| Cache | ioredis → Redis (Alpine) | — |
-| Validation | Zod 4 | Zod 4 (mirrored schemas) |
-| Routing | Express Router | React Router 7 |
-| Styling | — | Tailwind CSS 4 |
-| Auth | jsonwebtoken + bcrypt | Bearer token in `localStorage` |
-| Lint/Test | `tsc --noEmit` | oxlint |
+| Layer      | Server (`server/`)          | Client (`client/`)             |
+| ---------- | --------------------------- | ------------------------------ |
+| Runtime    | Node ≥ 20                   | Browser                        |
+| Framework  | Express 5                   | React 19 + Vite 8              |
+| Language   | TypeScript                  | TypeScript                     |
+| Data       | Drizzle ORM → PostgreSQL 17 | —                              |
+| Cache      | ioredis → Redis (Alpine)    | —                              |
+| Validation | Zod 4                       | Zod 4 (mirrored schemas)       |
+| Routing    | Express Router              | React Router 7                 |
+| Styling    | —                           | Tailwind CSS 4                 |
+| Auth       | jsonwebtoken + bcrypt       | Bearer token in `localStorage` |
+| Lint/Test  | `tsc --noEmit`              | oxlint                         |
 
 ---
 
@@ -82,7 +82,7 @@ A full-stack URL shortener: custom aliases, expiry, Redis-cached redirects, per-
 ## Project Structure
 
 ```
-surlvibe/
+s-url/
 ├── server/
 │   ├── docker-compose.yml        # postgres:17 + redis, healthchecks
 │   ├── migrations/               # Drizzle SQL migrations (0000–0003)
@@ -124,7 +124,7 @@ cp server/.env.example server/.env
 # edit server/.env — DATABASE_URL must match the POSTGRES_* values
 ```
 
-> **Containers:** this project uses `surlvibe-postgres` (host port **5433**) and `surlvibe-redis` (host port **6380**). Don't reuse another project's containers on 5432/6379.
+> **Containers:** this project uses `surl-postgres` (host port **5433**) and `surl-redis` (host port **6380**). Don't reuse another project's containers on 5432/6379.
 
 ### 2. Start the databases
 
@@ -169,20 +169,20 @@ Health check: `curl http://localhost:3000/healthz` → `{"status":"ok"}`
 
 Defined in `server/.env` (see `server/.env.example` for inline docs).
 
-| Key | Purpose | Notes |
-|---|---|---|
-| `NODE_ENV` | `development` / `test` / `production` | default `development` |
-| `PORT` | API port | default `3000` |
-| `POSTGRES_USER` / `POSTGRES_PASSWORD` / `POSTGRES_DB` | Compose container credentials | must match `DATABASE_URL` |
-| `POSTGRES_PORT` | Host port → container 5432 | `5433` here |
-| `DATABASE_URL` | Drizzle connection string | required |
-| `DATABASE_SSL` / `DATABASE_POOL_MAX` | Pool behavior | pool default `10` |
-| `REDIS_PASSWORD` / `REDIS_PORT` / `REDIS_URL` | Redis auth + address | `6380` here |
-| `CLICK_SYNC_INTERVAL_MS` | Redis→PG click flush cadence | default `1000`, min `1000` |
-| `JWT_SECRET` | Token signing key | required; `openssl rand -hex 64` |
-| `JWT_EXPIRES_IN` | Token lifetime | e.g. `1h`, `7d` |
-| `SHORT_URL_BASE` | Base for returned `shortUrl` | e.g. `http://localhost:3000` |
-| `FRONTEND_URL` | Where expired links redirect | `/expired?code=…`; unset → `410` JSON |
+| Key                                                   | Purpose                               | Notes                                 |
+| ----------------------------------------------------- | ------------------------------------- | ------------------------------------- |
+| `NODE_ENV`                                            | `development` / `test` / `production` | default `development`                 |
+| `PORT`                                                | API port                              | default `3000`                        |
+| `POSTGRES_USER` / `POSTGRES_PASSWORD` / `POSTGRES_DB` | Compose container credentials         | must match `DATABASE_URL`             |
+| `POSTGRES_PORT`                                       | Host port → container 5432            | `5433` here                           |
+| `DATABASE_URL`                                        | Drizzle connection string             | required                              |
+| `DATABASE_SSL` / `DATABASE_POOL_MAX`                  | Pool behavior                         | pool default `10`                     |
+| `REDIS_PASSWORD` / `REDIS_PORT` / `REDIS_URL`         | Redis auth + address                  | `6380` here                           |
+| `CLICK_SYNC_INTERVAL_MS`                              | Redis→PG click flush cadence          | default `1000`, min `1000`            |
+| `JWT_SECRET`                                          | Token signing key                     | required; `openssl rand -hex 64`      |
+| `JWT_EXPIRES_IN`                                      | Token lifetime                        | e.g. `1h`, `7d`                       |
+| `SHORT_URL_BASE`                                      | Base for returned `shortUrl`          | e.g. `http://localhost:3000`          |
+| `FRONTEND_URL`                                        | Where expired links redirect          | `/expired?code=…`; unset → `410` JSON |
 
 Env is validated with Zod at boot (`server/src/config/env.ts`) — the server exits immediately on missing/invalid config.
 
@@ -194,58 +194,64 @@ Base URL: `http://localhost:3000`. Auth: `Authorization: Bearer <token>` (from `
 
 ### Auth — `/api/auth`
 
-| Method | Path | Auth | Description |
-|---|---|---|---|
-| POST | `/register` | — | Create account (returns user, no token) |
-| POST | `/login` | — | Returns `{ token, user }` |
-| GET | `/me` | ✔ | Current user (incl. `plan`) |
+| Method | Path        | Auth | Description                             |
+| ------ | ----------- | ---- | --------------------------------------- |
+| POST   | `/register` | —    | Create account (returns user, no token) |
+| POST   | `/login`    | —    | Returns `{ token, user }`               |
+| GET    | `/me`       | ✔    | Current user (incl. `plan`)             |
 
-### Links — `/api/links` *(all require auth)*
+### Links — `/api/links` _(all require auth)_
 
-| Method | Path | Description |
-|---|---|---|
-| POST | `/` | Create short link — alias conflicts → `409`, quota → `402` |
-| GET | `/?page=&pageSize=` | Paginated list (`pageSize` ≤ 100) |
-| PUT | `/:id` | Update target/expiry (invalidates cache) |
-| DELETE | `/:id` | Delete link (invalidates cache) |
+| Method | Path                | Description                                                |
+| ------ | ------------------- | ---------------------------------------------------------- |
+| POST   | `/`                 | Create short link — alias conflicts → `409`, quota → `402` |
+| GET    | `/?page=&pageSize=` | Paginated list (`pageSize` ≤ 100)                          |
+| PUT    | `/:id`              | Update target/expiry (invalidates cache)                   |
+| DELETE | `/:id`              | Delete link (invalidates cache)                            |
 
-### Redirect — `/` *(public)*
+### Redirect — `/` _(public)_
 
-| Method | Path | Description |
-|---|---|---|
-| GET | `/:code` | `302` to target · expired → `302` `/expired` or `410` · unknown → `404` |
+| Method | Path     | Description                                                             |
+| ------ | -------- | ----------------------------------------------------------------------- |
+| GET    | `/:code` | `302` to target · expired → `302` `/expired` or `410` · unknown → `404` |
 
-### Stats — `/api/stats` *(all require auth)*
+### Stats — `/api/stats` _(all require auth)_
 
-| Method | Path | Description |
-|---|---|---|
-| GET | `/overview?days=` | Totals + zero-filled daily series + top 5 links |
-| GET | `/links/:id?days=` | Per-link detail (ownership enforced) |
+| Method | Path               | Description                                     |
+| ------ | ------------------ | ----------------------------------------------- |
+| GET    | `/overview?days=`  | Totals + zero-filled daily series + top 5 links |
+| GET    | `/links/:id?days=` | Per-link detail (ownership enforced)            |
 
 ### Billing — `/api/billing`
 
-| Method | Path | Auth | Description |
-|---|---|---|---|
-| GET | `/plans` | — | Plan catalog |
-| GET | `/subscription` | ✔ | Plan, expiry, alias usage/limit |
-| POST | `/checkout` | ✔ | Simulated purchase → extends `plan_expires_at` |
-| GET | `/payments` | ✔ | Payment history |
+| Method | Path            | Auth | Description                                    |
+| ------ | --------------- | ---- | ---------------------------------------------- |
+| GET    | `/plans`        | —    | Plan catalog                                   |
+| GET    | `/subscription` | ✔    | Plan, expiry, alias usage/limit                |
+| POST   | `/checkout`     | ✔    | Simulated purchase → extends `plan_expires_at` |
+| GET    | `/payments`     | ✔    | Payment history                                |
 
-### Admin — `/api/admin` *(all require `role: "admin"`, re-checked per request)*
+### Admin — `/api/admin` _(all require `role: "admin"`, re-checked per request)_
 
-| Method | Path | Description |
-|---|---|---|
-| GET | `/users?search=&page=` | Paginated users |
-| PATCH | `/users/:id` | Set role — guards: `CANNOT_CHANGE_OWN_ROLE`, `LAST_ADMIN` |
-| DELETE | `/users/:id` | Delete user + links (guard: `LAST_ADMIN`) |
-| GET | `/links?search=&page=` | All links |
-| DELETE | `/links/:id` | Delete any link (cache invalidated) |
-| GET | `/overview?days=` | Global stats |
+| Method | Path                   | Description                                               |
+| ------ | ---------------------- | --------------------------------------------------------- |
+| GET    | `/users?search=&page=` | Paginated users                                           |
+| PATCH  | `/users/:id`           | Set role — guards: `CANNOT_CHANGE_OWN_ROLE`, `LAST_ADMIN` |
+| DELETE | `/users/:id`           | Delete user + links (guard: `LAST_ADMIN`)                 |
+| GET    | `/links?search=&page=` | All links                                                 |
+| DELETE | `/links/:id`           | Delete any link (cache invalidated)                       |
+| GET    | `/overview?days=`      | Global stats                                              |
 
 **Error envelope** (all non-2xx):
 
 ```json
-{ "error": { "message": "Human-readable", "code": "MACHINE_CODE", "details": [] } }
+{
+  "error": {
+    "message": "Human-readable",
+    "code": "MACHINE_CODE",
+    "details": []
+  }
+}
 ```
 
 Codes the client maps to UI: `VALIDATION_ERROR` → field errors, `ALIAS_TAKEN` / `ALIAS_LIMIT_REACHED` → alias field, `UNAUTHORIZED`, `LINK_EXPIRED`, `LAST_ADMIN`, …
@@ -254,12 +260,12 @@ Codes the client maps to UI: `VALIDATION_ERROR` → field errors, `ALIAS_TAKEN` 
 
 ## Database
 
-| Table | Purpose |
-|---|---|
-| `users` | Accounts: email, bcrypt hash, `role` (`user`/`admin`), `plan`, `plan_expires_at` |
-| `urls` | Short links: `short_code` (**UNIQUE**), `original_url`, FK `user_id`, `clicks`, `is_custom_alias`, `expires_at` |
-| `click_daily` | `(url_id, day)` buckets — chart source; upserted during flush |
-| `payments` | Checkout records: amount, status, resulting `plan_expires_at` |
+| Table         | Purpose                                                                                                         |
+| ------------- | --------------------------------------------------------------------------------------------------------------- |
+| `users`       | Accounts: email, bcrypt hash, `role` (`user`/`admin`), `plan`, `plan_expires_at`                                |
+| `urls`        | Short links: `short_code` (**UNIQUE**), `original_url`, FK `user_id`, `clicks`, `is_custom_alias`, `expires_at` |
+| `click_daily` | `(url_id, day)` buckets — chart source; upserted during flush                                                   |
+| `payments`    | Checkout records: amount, status, resulting `plan_expires_at`                                                   |
 
 Schema: `server/src/db/schema.ts` · migrations: `server/migrations/` (Drizzle, `npm run db:generate` / `db:migrate`)
 
@@ -269,28 +275,23 @@ Schema: `server/src/db/schema.ts` · migrations: `server/migrations/` (Drizzle, 
 
 ### Server (`server/`)
 
-| Command | Purpose |
-|---|---|
-| `npm run dev` | API with watch (`tsx watch`) |
-| `npm run typecheck` | `tsc --noEmit` — **run before committing** |
-| `npm run build` / `start` | Compile / run `dist/` |
-| `npm run db:generate` | Generate migration from schema diff |
-| `npm run db:migrate` | Apply migrations |
-| `npm run db:check` | Migration drift check |
-| `npm run db:seed:demo` / `db:seed:admin` / `db:seed:clicks` | Demo data |
-| `npm run admin:promote` | Set a user's role from the CLI |
+| Command                                                     | Purpose                                    |
+| ----------------------------------------------------------- | ------------------------------------------ |
+| `npm run dev`                                               | API with watch (`tsx watch`)               |
+| `npm run typecheck`                                         | `tsc --noEmit` — **run before committing** |
+| `npm run build` / `start`                                   | Compile / run `dist/`                      |
+| `npm run db:generate`                                       | Generate migration from schema diff        |
+| `npm run db:migrate`                                        | Apply migrations                           |
+| `npm run db:check`                                          | Migration drift check                      |
+| `npm run db:seed:demo` / `db:seed:admin` / `db:seed:clicks` | Demo data                                  |
+| `npm run admin:promote`                                     | Set a user's role from the CLI             |
 
 ### Client (`client/`)
 
-| Command | Purpose |
-|---|---|
-| `npm run dev` | Vite dev server (:5173) |
-| `npm run lint` | oxlint |
+| Command         | Purpose                                            |
+| --------------- | -------------------------------------------------- |
+| `npm run dev`   | Vite dev server (:5173)                            |
+| `npm run lint`  | oxlint                                             |
 | `npm run build` | `tsc -b && vite build` — **run before committing** |
 
 ---
-
-## Documentation
-
-- [`docs/SERVICE_FLOWS.md`](docs/SERVICE_FLOWS.md) — detailed service-flow diagrams (Mermaid), including the all-in-one overview
-- [`surlvibe-erd.drawio`](surlvibe-erd.drawio) / [`surlvibe.dbml`](surlvibe.dbml) — ERD of the schema
