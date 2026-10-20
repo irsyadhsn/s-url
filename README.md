@@ -6,7 +6,8 @@ A full-stack URL shortener: custom aliases, expiry, Redis-cached redirects, per-
 
 ---
 
-| ![Main page screenshot][s-url_main_page] |
+| ![Main page](./screenshots/s-url_main_page.png) |
+|:---:|
 
 ## Features
 
