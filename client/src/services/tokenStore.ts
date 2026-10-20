@@ -12,13 +12,12 @@ export type ClearReason = "logout" | "expired";
 
 type Listener = (reason?: ClearReason) => void;
 
-const STORAGE_KEY = "surlvibe.token";
+const STORAGE_KEY = "surl.token";
 
 function readPersisted(): string | null {
   try {
     return localStorage.getItem(STORAGE_KEY);
   } catch {
-    // Private mode / storage blocked — fall back to in-memory only.
     return null;
   }
 }

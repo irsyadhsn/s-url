@@ -71,7 +71,7 @@ export function Pagination({
         disabled={disabled}
         onChange={(e) => onPageSizeChange?.(Number(e.target.value))}
         aria-label="Rows per page"
-        className="rounded-lg border border-slate-300 bg-white px-2 py-1 text-sm font-medium text-slate-700 shadow-sm transition-colors focus:border-indigo-500 focus:outline-2 focus:outline-offset-2 focus:outline-indigo-600 disabled:opacity-50"
+        className="rounded-md border border-slate-950 bg-white px-2 py-1 text-sm font-medium text-slate-700 transition-colors focus:border-indigo-600 focus:outline-2 focus:outline-offset-2 focus:outline-indigo-600 disabled:opacity-50"
       >
         {PAGE_SIZE_OPTIONS.map((size) => (
           <option key={size} value={size}>

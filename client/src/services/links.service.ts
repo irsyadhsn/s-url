@@ -12,9 +12,6 @@ export interface UpdateLinkInput {
   expiresAt?: string | null;
 }
 
-/**
- * All /api/links calls. Token injection happens in services/api.ts.
- */
 export const linksService = {
   list(
     params: { page?: number; pageSize?: number } = {},

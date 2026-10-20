@@ -6,6 +6,8 @@ A full-stack URL shortener: custom aliases, expiry, Redis-cached redirects, per-
 
 ---
 
+| ![Main page screenshot][s-url_main_page] |
+
 ## Features
 
 - **Shorten URLs** — random codes or custom aliases (`3–32 chars: a-z A-Z 0-9 - _`), with quota enforcement (free: 5 custom aliases, premium: unlimited)
@@ -183,6 +185,10 @@ Defined in `server/.env` (see `server/.env.example` for inline docs).
 | `JWT_EXPIRES_IN`                                      | Token lifetime                        | e.g. `1h`, `7d`                       |
 | `SHORT_URL_BASE`                                      | Base for returned `shortUrl`          | e.g. `http://localhost:3000`          |
 | `FRONTEND_URL`                                        | Where expired links redirect          | `/expired?code=…`; unset → `410` JSON |
+| `REDIRECT_RATE_WINDOW_S`                              | Rate-limit window (seconds)           | default `60`                         |
+| `REDIRECT_RATE_ALL_MAX`                               | All-redirects ceiling per IP          | default `300` (circuit breaker)      |
+| `REDIRECT_RATE_MISS_MAX`                              | Cache-miss ceiling per IP (pre-DB)    | default `60`                         |
+| `TRUST_PROXY`                                         | Proxy hops to trust for `req.ip`      | `0` off; `1` behind a reverse proxy  |
 
 Env is validated with Zod at boot (`server/src/config/env.ts`) — the server exits immediately on missing/invalid config.
 
@@ -213,7 +219,7 @@ Base URL: `http://localhost:3000`. Auth: `Authorization: Bearer <token>` (from `
 
 | Method | Path     | Description                                                             |
 | ------ | -------- | ----------------------------------------------------------------------- |
-| GET    | `/:code` | `302` to target · expired → `302` `/expired` or `410` · unknown → `404` |
+| GET    | `/:code` | `302` to target · expired → `302` `/expired` or `410` · unknown → `404` · over limit → `429` + `Retry-After` |
 
 ### Stats — `/api/stats` _(all require auth)_
 

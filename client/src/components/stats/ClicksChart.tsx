@@ -29,7 +29,7 @@ export function ClicksChart({ series, height = 132, caption }: ClicksChartProps)
   if (series.length === 0 || total === 0) {
     return (
       <div
-        className="flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-300 bg-slate-50 px-4 text-center"
+        className="flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-200 bg-slate-50 px-4 text-center"
         style={{ height }}
       >
         <p className="text-sm font-medium text-slate-600">No clicks yet</p>

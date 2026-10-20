@@ -1,4 +1,6 @@
 import { redis } from "../../db/redis.js";
+import { overRedirectMissLimit } from "../../middleware/rateLimit.js";
+import { ApiError } from "../../utils/errors.js";
 import * as redirectCache from "./redirect.cache.js";
 import * as redirectRepository from "./redirect.repository.js";
 
@@ -25,7 +27,10 @@ end
 return res
 `;
 
-export async function resolve(code: string): Promise<ResolveOutcome> {
+export async function resolve(
+  code: string,
+  ip: string,
+): Promise<ResolveOutcome> {
   const cached = await redirectCache.get(code);
   if (cached) {
     if (cached.expiresAt && Date.parse(cached.expiresAt) <= Date.now()) {
@@ -33,6 +38,12 @@ export async function resolve(code: string): Promise<ResolveOutcome> {
       return { kind: "expired" };
     }
     return { kind: "link", originalUrl: cached.originalUrl, shortCode: code };
+  }
+
+  // Cache miss = one Postgres lookup. Cut off probing before the query;
+  // fail-open if Redis is down (overRedirectMissLimit → false).
+  if (await overRedirectMissLimit(ip)) {
+    throw ApiError.tooManyRequests("Too many unknown-link requests");
   }
 
   const row = await redirectRepository.findByShortCode(code);

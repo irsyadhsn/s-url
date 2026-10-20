@@ -9,10 +9,8 @@ export function NotFoundPage() {
   return (
     <div className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-6xl flex-col items-center justify-center px-4 py-16 text-center">
       <LogoMark size="lg" />
-      <p className="mt-6 text-sm font-semibold tracking-widest text-indigo-600 uppercase">
-        404
-      </p>
-      <h1 className="mt-2 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+      <p className="mt-6 font-mono text-lg font-semibold text-indigo-600">404</p>
+      <h1 className="mt-2 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
         Page not found
       </h1>
       <p className="mt-3 max-w-md text-sm leading-relaxed text-slate-600">
@@ -21,13 +19,13 @@ export function NotFoundPage() {
       <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
         <Link
           to="/"
-          className="inline-flex items-center justify-center rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-indigo-500"
+          className="inline-flex items-center justify-center rounded-lg bg-slate-950 px-5 py-2.5 text-sm font-semibold text-white shadow-btn transition-colors hover:bg-slate-800"
         >
           Back to home
         </Link>
         <Link
           to={authed ? "/dashboard" : "/register"}
-          className="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition-colors hover:border-slate-400 hover:bg-slate-50"
+          className="inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-900 transition-colors hover:border-slate-300 hover:bg-slate-50"
         >
           {authed ? "Dashboard" : "Get started"}
         </Link>

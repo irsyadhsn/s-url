@@ -23,11 +23,7 @@ export function ExpiredPage() {
         </svg>
       </div>
 
-      <p className="mt-6 text-sm font-semibold tracking-widest text-amber-600 uppercase">
-        Link expired
-      </p>
-
-      <h1 className="mt-2 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+      <h1 className="mt-6 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
         This link is no longer available
       </h1>
 
@@ -48,13 +44,13 @@ export function ExpiredPage() {
       <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
         <Link
           to="/"
-          className="inline-flex items-center justify-center rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-indigo-500"
+          className="inline-flex items-center justify-center rounded-lg bg-slate-950 px-5 py-2.5 text-sm font-semibold text-white shadow-btn transition-colors hover:bg-slate-800"
         >
           Back to home
         </Link>
         <Link
           to="/register"
-          className="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition-colors hover:border-slate-400 hover:bg-slate-50"
+          className="inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-900 transition-colors hover:border-slate-300 hover:bg-slate-50"
         >
           Create your own links
         </Link>

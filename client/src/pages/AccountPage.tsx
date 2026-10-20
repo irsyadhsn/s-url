@@ -18,7 +18,7 @@ function formatDate(iso: string | null): string {
 
 function PlanBadge({ plan }: { plan: SubscriptionInfo["plan"] }) {
   return plan === "premium" ? (
-    <span className="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-indigo-600 to-violet-600 px-3 py-1 text-xs font-semibold text-white">
+    <span className="inline-flex items-center gap-1 rounded-full bg-slate-900 px-3 py-1 text-xs font-semibold text-white">
       <svg
         className="size-3.5"
         viewBox="0 0 24 24"
@@ -111,7 +111,7 @@ function PaymentHistory({
     <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-card">
       <table className="w-full min-w-[560px] text-left text-sm">
         <thead>
-          <tr className="border-b border-slate-200 text-xs uppercase tracking-wide text-slate-500">
+          <tr className="border-b border-slate-200 text-xs font-medium text-slate-500">
             <th className="px-5 py-3 font-semibold">Reference</th>
             <th className="px-5 py-3 font-semibold">Date</th>
             <th className="px-5 py-3 font-semibold">Plan</th>
@@ -124,7 +124,7 @@ function PaymentHistory({
           {items.map((p) => (
             <tr
               key={p.id}
-              className="border-b border-slate-100 transition-colors last:border-0 hover:bg-slate-50"
+              className="border-b border-slate-200 transition-colors last:border-0 hover:bg-slate-50"
             >
               <td className="px-5 py-3 font-mono text-xs font-medium text-indigo-600">
                 {p.reference}
@@ -225,7 +225,7 @@ export function AccountPage() {
   return (
     <div className="mx-auto flex max-w-5xl flex-col gap-6 px-4 py-8 sm:px-6 sm:py-10">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+        <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
           Profile
         </h1>
         <p className="mt-1 text-sm text-slate-500">
@@ -238,7 +238,7 @@ export function AccountPage() {
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-4">
               <span
-                className="grid size-14 shrink-0 place-items-center rounded-full bg-gradient-to-br from-indigo-600 to-violet-600 text-xl font-bold text-white"
+                className="grid size-14 shrink-0 place-items-center rounded-full bg-indigo-600 text-xl font-semibold text-white"
                 aria-hidden="true"
               >
                 {user.email.charAt(0).toUpperCase()}
@@ -322,7 +322,7 @@ export function AccountPage() {
               ) : null}
             </div>
 
-            <div className="mt-6 border-t border-slate-100 pt-6">
+            <div className="mt-6 border-t border-slate-200 pt-6">
               <UsageBar
                 used={subscription.customAliasUsed}
                 limit={subscription.customAliasLimit}

@@ -15,7 +15,6 @@ const TABS: { id: AdminTab; label: string }[] = [
 export function AdminPage() {
   const { user } = useAuth();
   const [tab, setTab] = useState<AdminTab>("overview");
-  // Bumped on user/link mutations so the overview refetches when revisited.
   const [refreshToken, setRefreshToken] = useState(0);
 
   function handleChanged() {
@@ -25,7 +24,7 @@ export function AdminPage() {
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-8 sm:px-6 sm:py-10">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+        <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
           Admin
         </h1>
         <p className="mt-1 text-sm text-slate-500">
@@ -60,10 +59,7 @@ export function AdminPage() {
       {tab === "overview" ? (
         <OverviewPanel refreshToken={refreshToken} />
       ) : tab === "users" ? (
-        <UsersPanel
-          currentUserId={user?.id ?? ""}
-          onChanged={handleChanged}
-        />
+        <UsersPanel currentUserId={user?.id ?? ""} onChanged={handleChanged} />
       ) : (
         <LinksPanel onChanged={handleChanged} />
       )}

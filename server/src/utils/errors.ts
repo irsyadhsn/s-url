@@ -50,4 +50,11 @@ export class ApiError extends Error {
   ): ApiError {
     return new ApiError(402, code, message);
   }
+
+  static tooManyRequests(
+    message = "Too many requests",
+    code = "TOO_MANY_REQUESTS",
+  ): ApiError {
+    return new ApiError(429, code, message);
+  }
 }

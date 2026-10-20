@@ -88,7 +88,7 @@ function Receipt({ result }: { result: CheckoutResponse }) {
         </div>
       </div>
 
-      <dl className="mt-6 divide-y divide-slate-100 border-t border-slate-100 text-sm">
+      <dl className="mt-6 divide-y divide-slate-200 border-t border-slate-200 text-sm">
         <div className="flex items-center justify-between py-3">
           <dt className="text-slate-500">Reference</dt>
           <dd className="font-mono font-medium text-slate-900">
@@ -224,7 +224,7 @@ export function CheckoutPage() {
           </svg>
           Back
         </button>
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+        <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
           Upgrade to Premium
         </h1>
         <p className="mt-1 text-sm text-slate-500">
@@ -242,7 +242,7 @@ export function CheckoutPage() {
             </p>
             <p className="text-xs text-slate-500">30 days · unlimited aliases</p>
           </div>
-          <p className="text-lg font-bold text-slate-900">
+          <p className="text-lg font-semibold text-slate-900">
             {PREMIUM_PRICE_LABEL}
           </p>
         </div>

@@ -14,7 +14,6 @@ import { Button } from "../ui/Button";
 import { FREE_ALIAS_LIMIT, LinkFormFields } from "./LinkFormFields";
 
 interface CreateLinkFormProps {
-  /** Called after the API accepts the new link (parent refreshes the list). */
   onCreated(): void;
 }
 
@@ -25,11 +24,8 @@ export function CreateLinkForm({ onCreated }: CreateLinkFormProps) {
   const [submitting, setSubmitting] = useState(false);
   const [plan, setPlan] = useState<"free" | "premium">("free");
   const [aliasUsed, setAliasUsed] = useState<number | undefined>(undefined);
-  /** `null` = unlimited (premium or admin) — no quota hint, no upsell. */
   const [aliasLimit, setAliasLimit] = useState<number | null>(FREE_ALIAS_LIMIT);
 
-  // Drives the "3/5 used" hint + the upgrade link. Best-effort: on failure
-  // we simply fall back to the plain free-plan wording.
   useEffect(() => {
     const controller = new AbortController();
     billingService
@@ -84,8 +80,6 @@ export function CreateLinkForm({ onCreated }: CreateLinkFormProps) {
       const { fields, message } = parseError(err);
       if (Object.keys(fields).length > 0) {
         setErrors(fields);
-        // A customAlias error may mean the quota just filled (402) —
-        // re-read the counter so the hint and upsell reflect reality.
         if (fields.customAlias) refreshQuota();
       } else {
         toast.error(message ?? "Could not create link");

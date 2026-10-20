@@ -100,7 +100,7 @@ export function Modal({ open, onClose, title, children, footer }: ModalProps) {
         </div>
         {children}
         {footer ? (
-          <div className="mt-6 flex justify-end gap-3 border-t border-slate-100 pt-4">
+          <div className="mt-6 flex justify-end gap-3 border-t border-slate-200 pt-4">
             {footer}
           </div>
         ) : null}

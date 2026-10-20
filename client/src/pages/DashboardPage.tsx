@@ -22,20 +22,16 @@ export function DashboardPage() {
   const [editingLink, setEditingLink] = useState<Link | null>(null);
   const [deletingLink, setDeletingLink] = useState<Link | null>(null);
   const [statsLink, setStatsLink] = useState<Link | null>(null);
-  // Bumped on create/delete so stats (totals, chart, top list) refetch too.
   const [statsVersion, setStatsVersion] = useState(0);
   const { status, data, error, reload } = useLinks(page, pageSize);
 
   function handlePageSizeChange(size: number) {
     setPageSize(size);
-    // Row count changed, so the old page number may no longer exist.
     setPage(1);
   }
 
   function refresh() {
     setStatsVersion((v) => v + 1);
-    // New links land on page 1 (list is newest-first); a shrink after
-    // delete may need to step back a page instead of reloading an empty one.
     if (page !== 1) {
       setPage(1);
     } else {
@@ -56,7 +52,7 @@ export function DashboardPage() {
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-8 sm:px-6 sm:py-10">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+        <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
           Your links
         </h1>
         <p className="mt-1 text-sm text-slate-500">
@@ -74,7 +70,10 @@ export function DashboardPage() {
       {status === "loading" && !data ? (
         <LinkTableSkeleton />
       ) : status === "error" ? (
-        <LinkTableError message={error ?? "Failed to load links"} onRetry={reload} />
+        <LinkTableError
+          message={error ?? "Failed to load links"}
+          onRetry={reload}
+        />
       ) : data && data.items.length === 0 && page === 1 ? (
         <LinkTableEmpty />
       ) : data ? (
@@ -120,10 +119,7 @@ export function DashboardPage() {
       ) : null}
 
       {statsLink ? (
-        <LinkStatsModal
-          link={statsLink}
-          onClose={() => setStatsLink(null)}
-        />
+        <LinkStatsModal link={statsLink} onClose={() => setStatsLink(null)} />
       ) : null}
     </div>
   );

@@ -102,7 +102,7 @@ function LinkStatsContent({ data }: { data: LinkStatsResponse }) {
         <ClicksChart series={series} height={110} caption="Last 14 days · UTC" />
       </div>
 
-      <dl className="grid grid-cols-1 gap-2 border-t border-slate-100 pt-3 text-xs sm:grid-cols-2">
+      <dl className="grid grid-cols-1 gap-2 border-t border-slate-200 pt-3 text-xs sm:grid-cols-2">
         <div className="min-w-0">
           <dt className="font-medium text-slate-400">Short link</dt>
           <dd

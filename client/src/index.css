@@ -1,16 +1,53 @@
 @import "tailwindcss";
 
+/*
+ * Dub-style theme (see DESIGN.md). Class names keep their old slate/indigo
+ * names — the values below are truth:
+ *   slate  → Dub grayscale (ash borders, paper surfaces, charcoal text)
+ *   indigo → electric-blue accent scale (#2563eb), highlights only
+ * Primary actions are near-black; borders define containers, not shadows.
+ */
 @theme {
   --font-sans:
     "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
     "Helvetica Neue", Arial, sans-serif;
   --font-mono:
-    ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+    "IBM Plex Mono", ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
     "Liberation Mono", monospace;
 
-  --shadow-card:
-    0 1px 2px 0 rgb(15 23 42 / 0.05), 0 1px 3px 0 rgb(15 23 42 / 0.06);
-  --shadow-lift: 0 24px 48px -24px rgb(79 70 229 / 0.35);
+  /* Dub grayscale ramp */
+  --color-slate-50: #fafafa;
+  --color-slate-100: #f5f5f5;
+  --color-slate-200: #e5e5e5;
+  --color-slate-300: #d4d4d4;
+  --color-slate-400: #a3a3a3;
+  --color-slate-500: #737373;
+  --color-slate-600: #525252;
+  --color-slate-700: #404040;
+  --color-slate-800: #262626;
+  --color-slate-900: #171717;
+  --color-slate-950: #0a0a0a;
+
+  /* electric blue accent scale */
+  --color-indigo-50: #eff6ff;
+  --color-indigo-100: #dbeaff;
+  --color-indigo-200: #bfdbfe;
+  --color-indigo-300: #93c5fd;
+  --color-indigo-400: #60a5fa;
+  --color-indigo-500: #3b82f6;
+  --color-indigo-600: #2563eb;
+  --color-indigo-700: #1e40af;
+  --color-indigo-800: #1e3a8a;
+  --color-indigo-900: #172554;
+
+  /* reserved for errors / destructive only */
+  --color-signal: #dc2626;
+  --color-signal-soft: #fef2f2;
+
+  /* border-first elevation: cards are flat, structure comes from 1px edges */
+  --shadow-card: none;
+  --shadow-lift: 0 0 0 4px rgb(0 0 0 / 0.1);
+  --shadow-btn: rgba(0, 0, 0, 0.05) 0px 1px 2px 0px;
 }
 
 @layer base {
@@ -20,14 +57,23 @@
   }
 
   body {
-    background-color: var(--color-slate-50);
+    background-color: #ffffff;
     color: var(--color-slate-900);
     font-family: var(--font-sans);
-    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 
   ::selection {
     background-color: var(--color-indigo-100);
-    color: var(--color-indigo-900);
+    color: var(--color-slate-900);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
   }
 }

@@ -35,7 +35,7 @@ function PlanCard({
       ].join(" ")}
     >
       {premium ? (
-        <span className="absolute -top-3 left-6 rounded-full bg-gradient-to-r from-indigo-600 to-violet-600 px-3 py-0.5 text-xs font-semibold text-white shadow-sm">
+        <span className="absolute -top-3 left-6 rounded-full bg-slate-900 px-3 py-0.5 text-xs font-semibold text-white shadow-sm">
           Most popular
         </span>
       ) : null}
@@ -52,7 +52,7 @@ function PlanCard({
       <p className="mt-1 text-sm text-slate-500">{plan.tagline}</p>
 
       <p className="mt-5 flex items-baseline gap-1">
-        <span className="text-4xl font-bold tracking-tight text-slate-900">
+        <span className="text-4xl font-semibold tracking-tight text-slate-900">
           {priceLabel(plan)}
         </span>
       </p>
@@ -128,8 +128,8 @@ export function PricingPage() {
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 sm:py-16">
-      <div className="mx-auto max-w-2xl text-center">
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+      <div className="max-w-2xl">
+        <h1 className="text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
           Simple pricing
         </h1>
         <p className="mt-3 text-slate-600">
@@ -175,7 +175,7 @@ export function PricingPage() {
         </div>
       )}
 
-      <p className="mt-10 text-center text-sm text-slate-500">
+      <p className="mt-10 text-sm text-slate-500">
         Already have an account?{" "}
         <Link
           to="/login"

@@ -61,10 +61,22 @@ export function OverviewPanel({ refreshToken }: OverviewPanelProps) {
           Array.from({ length: 4 }, (_, i) => <StatCardSkeleton key={i} />)
         ) : (
           <>
-            <StatCard label="Users" value={totals.users} hint={`${totals.admins} admin${totals.admins === 1 ? "" : "s"}`} />
+            <StatCard
+              label="Users"
+              value={totals.users}
+              hint={`${totals.admins} admin${totals.admins === 1 ? "" : "s"}`}
+            />
             <StatCard label="New users (7d)" value={totals.newUsers} />
-            <StatCard label="Links" value={totals.links} hint={`${totals.activeLinks} active`} />
-            <StatCard label="Total clicks" value={totals.clicks} hint={`${totals.clicksToday} today`} />
+            <StatCard
+              label="Links"
+              value={totals.links}
+              hint={`${totals.activeLinks} active`}
+            />
+            <StatCard
+              label="Total clicks"
+              value={totals.clicks}
+              hint={`${totals.clicksToday} today`}
+            />
           </>
         )}
       </div>
@@ -108,7 +120,7 @@ export function OverviewPanel({ refreshToken }: OverviewPanelProps) {
             {loading || !data ? (
               <div
                 aria-busy="true"
-                className="h-[184px] animate-pulse rounded-xl bg-slate-100"
+                className="h-46 animate-pulse rounded-xl bg-slate-100"
               />
             ) : (
               <ClicksChart
@@ -120,7 +132,7 @@ export function OverviewPanel({ refreshToken }: OverviewPanelProps) {
 
           <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-card">
             <h2 className="text-sm font-semibold text-slate-900">Top links</h2>
-            <ol className="mt-2 flex flex-col divide-y divide-slate-100">
+            <ol className="mt-2 flex flex-col divide-y divide-slate-200">
               {loading || !data ? (
                 Array.from({ length: 4 }, (_, i) => (
                   <li key={i} className="py-2.5">

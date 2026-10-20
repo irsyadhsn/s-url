@@ -70,7 +70,7 @@ export function LinkTable({ links, onEdit, onDelete, onStats }: LinkTableProps) 
   return (
     <div className="relative overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-card">
       <table className="w-full min-w-[720px] text-left text-sm">
-        <thead className="border-b border-slate-200 bg-slate-50 text-[11px] font-semibold tracking-wider text-slate-500 uppercase">
+        <thead className="border-b border-slate-200 bg-slate-50 text-xs font-semibold text-slate-500">
           <tr>
             <th scope="col" className="px-4 py-3">Short link</th>
             <th scope="col" className="px-4 py-3">Original URL</th>
@@ -82,7 +82,7 @@ export function LinkTable({ links, onEdit, onDelete, onStats }: LinkTableProps) 
             </th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-slate-100">
+        <tbody className="divide-y divide-slate-200">
           {links.map((link) => {
             const expired = isExpired(link.expiresAt);
             return (
@@ -112,12 +112,12 @@ export function LinkTable({ links, onEdit, onDelete, onStats }: LinkTableProps) 
                     target="_blank"
                     rel="noopener noreferrer"
                     title={link.originalUrl}
-                    className="block max-w-72 truncate text-slate-600 underline-offset-2 hover:text-slate-900 hover:underline"
+                    className="block max-w-72 truncate font-mono text-[13px] text-slate-600 underline-offset-2 hover:text-slate-900 hover:underline"
                   >
                     {link.originalUrl}
                   </a>
                 </td>
-                <td className="px-4 py-3 text-right font-semibold text-slate-900 tabular-nums">
+                <td className="px-4 py-3 text-right font-mono font-semibold text-slate-900 tabular-nums">
                   {link.clicks}
                 </td>
                 <td className="px-4 py-3 text-slate-600">
@@ -160,7 +160,7 @@ export function LinkTableSkeleton({ rows = 5 }: { rows?: number }) {
       <div className="border-b border-slate-200 bg-slate-50 px-4 py-3">
         <div className="h-3 w-40 animate-pulse rounded bg-slate-200" />
       </div>
-      <div className="divide-y divide-slate-100">
+      <div className="divide-y divide-slate-200">
         {Array.from({ length: rows }, (_, i) => (
           <div key={i} className="flex items-center gap-4 px-4 py-4">
             <div className="h-3 w-24 animate-pulse rounded bg-slate-200" />

@@ -16,22 +16,6 @@ import { NotFoundPage } from "../pages/NotFoundPage";
 import { PricingPage } from "../pages/PricingPage";
 import { RegisterPage } from "../pages/RegisterPage";
 
-/**
- * Route map
- *
- *   /            public   landing
- *   /pricing     public   free vs premium plans
- *   /expired     public   friendly page for expired short links (302 target)
- *   /login       guest    (authed users bounce to /dashboard)
- *   /register    guest    (authed users bounce to /dashboard)
- *   /dashboard   protected
- *   /checkout    protected simulated payment for premium
- *   /account     protected plan status + payment history
- *   /admin       admin    user management, link moderation, system stats
- *   *            public   404
- *
- * GuestRoute / ProtectedRoute / AdminRoute live in components/auth/guards.tsx.
- */
 export const router = createBrowserRouter([
   {
     path: "/",

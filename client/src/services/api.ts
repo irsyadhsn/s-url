@@ -4,10 +4,6 @@ import type { ApiErrorBody } from "./types";
 
 const BASE_URL = API_BASE_URL;
 
-/**
- * Normalized error for every non-2xx response (or network failure).
- * Components catch this and surface `message` to the user — never raw console noise.
- */
 export class ApiError extends Error {
   readonly status: number;
   readonly code: string;
@@ -21,7 +17,9 @@ export class ApiError extends Error {
     this.details = body.details;
   }
 
-  static network(message = "Cannot reach the server. Is it running?"): ApiError {
+  static network(
+    message = "Cannot reach the server. Is it running?",
+  ): ApiError {
     return new ApiError(0, { message, code: "NETWORK_ERROR" });
   }
 }
@@ -84,7 +82,8 @@ async function request<T>(
     res = await fetch(buildUrl(path, options.query), {
       method,
       headers,
-      body: options.body !== undefined ? JSON.stringify(options.body) : undefined,
+      body:
+        options.body !== undefined ? JSON.stringify(options.body) : undefined,
       signal: options.signal,
     });
   } catch (err) {
@@ -97,9 +96,6 @@ async function request<T>(
   const data = await parseBody(res);
 
   if (!res.ok) {
-    // Rejecting a token we actually sent → session is dead; notify store
-    // subscribers (AuthContext logs the user out with an "expired" reason).
-    // Login 401s never hit this branch: no token is attached yet.
     if (res.status === 401 && token) {
       tokenStore.clear("expired");
     }
@@ -109,7 +105,10 @@ async function request<T>(
         : undefined;
     throw new ApiError(
       res.status,
-      errBody ?? { message: `Request failed (${res.status})`, code: "UNKNOWN_ERROR" },
+      errBody ?? {
+        message: `Request failed (${res.status})`,
+        code: "UNKNOWN_ERROR",
+      },
     );
   }
 

@@ -6,7 +6,7 @@ interface LogoMarkProps {
 const MARK_SIZES: Record<NonNullable<LogoMarkProps["size"]>, string> = {
   sm: "size-6 rounded-md",
   md: "size-7 rounded-lg",
-  lg: "size-10 rounded-xl",
+  lg: "size-10 rounded-lg",
 };
 
 const GLYPH_SIZES: Record<NonNullable<LogoMarkProps["size"]>, string> = {
@@ -15,11 +15,11 @@ const GLYPH_SIZES: Record<NonNullable<LogoMarkProps["size"]>, string> = {
   lg: "size-6",
 };
 
-/** Gradient tile + link glyph — the app icon in component form. */
+/** Solid route-blue tile + link glyph — the app icon in component form. */
 export function LogoMark({ size = "md", className = "" }: LogoMarkProps) {
   return (
     <span
-      className={`inline-grid shrink-0 place-items-center bg-gradient-to-br from-indigo-500 to-indigo-700 text-white shadow-sm ${MARK_SIZES[size]} ${className}`}
+      className={`inline-grid shrink-0 place-items-center bg-indigo-600 text-white ${MARK_SIZES[size]} ${className}`}
       aria-hidden="true"
     >
       <svg

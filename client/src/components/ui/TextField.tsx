@@ -25,12 +25,12 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
           aria-invalid={error ? true : undefined}
           aria-describedby={error ? errorId : undefined}
           className={[
-            "rounded-lg border bg-white px-3 py-2 text-sm text-slate-900 shadow-sm transition-colors placeholder:text-slate-400",
+            "rounded-md border bg-white px-3 py-2 text-sm text-slate-900 transition-colors placeholder:text-slate-400",
             "focus:outline-2 focus:outline-offset-2",
             "disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-500",
             error
               ? "border-red-400 focus:border-red-500 focus:outline-red-600"
-              : "border-slate-300 focus:border-indigo-500 focus:outline-indigo-600",
+              : "border-slate-950 focus:border-indigo-600 focus:outline-indigo-600",
             className,
           ].join(" ")}
           {...inputProps}

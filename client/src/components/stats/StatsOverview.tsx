@@ -99,7 +99,7 @@ export function StatsOverview({ refreshToken, onOpenLinkStats }: StatsOverviewPr
 
           <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-card">
             <h2 className="text-sm font-semibold text-slate-900">Top links</h2>
-            <ol className="mt-2 flex flex-col divide-y divide-slate-100">
+            <ol className="mt-2 flex flex-col divide-y divide-slate-200">
               {loading || !data ? (
                 Array.from({ length: 4 }, (_, i) => (
                   <li key={i} className="py-2.5">

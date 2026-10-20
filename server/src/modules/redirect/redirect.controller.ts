@@ -1,12 +1,20 @@
 import type { RequestHandler } from "express";
 import { env } from "../../config/env.js";
 import { ApiError } from "../../utils/errors.js";
-import { codeParamSchema, type CodeParam } from "./redirect.schemas.js";
+import { type CodeParam } from "./redirect.schemas.js";
 import * as redirectService from "./redirect.service.js";
 
 export const redirect: RequestHandler = async (req, res) => {
   const { code } = req.validated!.params as CodeParam;
-  const outcome = await redirectService.resolve(code);
+  let outcome;
+  try {
+    outcome = await redirectService.resolve(code, req.ip ?? "unknown");
+  } catch (err) {
+    if (err instanceof ApiError && err.status === 429) {
+      res.set("Retry-After", String(env.REDIRECT_RATE_WINDOW_S));
+    }
+    throw err;
+  }
 
   switch (outcome.kind) {
     case "link": {

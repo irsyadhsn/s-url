@@ -4,14 +4,12 @@ interface StatCardProps {
   hint?: string;
 }
 
-/** Compact KPI tile: small uppercase label, big tabular number, optional hint. */
+/** Compact KPI tile: small label, big mono number, optional hint. */
 export function StatCard({ label, value, hint }: StatCardProps) {
   return (
     <div className="rounded-2xl border border-slate-200 bg-white px-4 py-4 shadow-card">
-      <p className="text-[11px] font-semibold tracking-wider text-slate-500 uppercase">
-        {label}
-      </p>
-      <p className="mt-1.5 text-2xl font-semibold tracking-tight text-slate-900 tabular-nums">
+      <p className="text-xs font-medium text-slate-500">{label}</p>
+      <p className="mt-1.5 font-mono text-2xl font-semibold tracking-tight text-slate-900 tabular-nums">
         {typeof value === "number" ? value.toLocaleString() : value}
       </p>
       {hint ? (
